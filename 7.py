@@ -40,14 +40,12 @@ def part2(lines):
         i += 1
         new_paths = {}
         for path in paths:
-            split = False
 
             if lines[i][path[1]] == "^":
                 dict_adder(new_paths, (i, path[1]-1), paths[path])
                 dict_adder(new_paths, (i, path[1]+1), paths[path])
-                split = True
 
-            if not split:
+            else:
                 dict_adder(new_paths, (i, path[1]), paths[path])
         
         paths = new_paths
