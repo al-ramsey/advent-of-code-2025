@@ -1,9 +1,8 @@
-from aoc_useful_functions import *
+from aoc_useful_functions import flatten
 import math
-import numpy as np
-import time
+#import time
 
-file = r"c:/Users/jledg/Documents/not_backed_up/input8.txt"
+file = r"[PATH]"
 filein = open(file, "r", encoding='UTF-8')
 lines = filein.readlines()
 filein.close()
@@ -11,7 +10,6 @@ filein.close()
 lines = [l[:-1] for l in lines]
 lines = [l.split(",") for l in lines]
 lines = [[int(k) for k in l] for l in lines]
-#print(lines)
 
 def dist(x,y):
     return math.sqrt((x[0]-y[0])**2 + (x[1]-y[1])**2 + (x[2] - y[2])**2)
@@ -26,58 +24,8 @@ def dist_array(lines):
     
     return d
 
-def shortest_distance_pair_bad(lines, exc):
-    distances = [[0]*len(lines) for i in range(len(lines))]
-    d = (dist(lines[0], lines[1]), 0, 1)
-    for i in range(len(lines)):
-        for j in range(len(lines)):
-            if j > i:
-                distances[i][j] = dist(lines[i], lines[j])
-                if (i,j) not in exc and distances[i][j] < d[0]:
-                    d = (distances[i][j], i, j)
-
-    #d = min([min(distances[i])])
-    #d = (distances[0][1], 0, 1)
-    #for i in range(len(lines)):
-    #    for j in range(len(lines)):
-    #        if (i,j) not in exc and distances[i][j] < d[0]:
-    #            d = (distances[i][j], i, j)
-
-    return d
-
-def shortest_distance_pair(lines, exc, darray):
-    d = (darray[0][1], 0, 1)
-    #print(len(lines))
-    for i in range(len(lines)):
-        for j in range(len(lines)):
-            if j > i:
-                if (i,j) not in exc and darray[i][j] < d[0]:
-                    d = (darray[i][j], i, j)
-
-    return d
-
 connections = [[0]*i +[1] + [0]*(len(lines)-i-1) for i in range(len(lines))]
 connections = connections.copy()
-
-def connect_shortest(connections, lines, darray):
-    exc = [(i,i) for i in range(len(lines))]
-    for i in range(len(lines)):
-        for j in range(len(lines)):
-            if connections[i][j] == 1:
-                exc.append((i,j))
-                exc.append((j,i))
-    
-    d = shortest_distance_pair(lines, exc, darray)
-    newl = connections[d[1]]
-    newl = newl[:d[2]] + [1] + newl[d[2]+1:]
-    #connections[d[1]][d[2]] = 1
-    #connections[0][1] = 2
-    # I hate python sometimes
-    # yes I know lists are mutable but you don't have to make them THAT mutable!!!
-    # now you're just being facetious.
-    connections = connections[:d[1]] + [newl] + connections[d[1]+1:]
-
-    return connections
 
 def connect_these(connections, d):
     newl = connections[d[1]]
@@ -100,8 +48,7 @@ def connected_components(connections):
             for j in range(len(ccoords)):
                 if i != j:
                     if set(ccoords[i]).intersection(set(ccoords[j])) != set():
-                        #print({} == set())
-                        # how is {} not the empty set?????????
+                        #print({} == set()) # apparently {} is not the empty set??
                         new_ccoords.append(list(set(ccoords[i]).union(set(ccoords[j]))))
                         broken = True
                         break
@@ -160,8 +107,10 @@ This is sort of cheating, but it's late, and it worked. On my input r = 3778.
 #print(part1(lines, connections, 3778))
 
 '''
+what's below doesn't work (too slow), but I'm leaving it in for historical interest
+
 darray = dist_array(lines)
-darray_sorted = sorted(list(set(flatten(darray))))[1:] # I HATE SETS SO MUCH!!!!!!!!!! (I originally wrote list(set(sorted(...))) :)))))))))) )
+darray_sorted = sorted(list(set(flatten(darray))))[1:]
 flat_darray = flatten(darray)
 
 c = connected_components(connections)
